@@ -14,13 +14,22 @@ class App extends React.Component {
         // we called setstate
         this.setState({ lat: position.coords.latitude });
       },
-      (err) => console.log(err)
+      (err) => {
+        this.setState({ errorMessage: err.message });
+      }
     );
   }
 
   render() {
     return (
-      <div>Latitude: {this.state.lat ? this.state.lat : "loading..."}</div>
+      <div>
+        {this.state.errorMessage
+          ? null
+          : this.state.lat
+          ? `Latitude: ${this.state.lat}`
+          : `Latitude: loading...`}
+        {this.state.errorMessage && `Error: ${this.state.errorMessage}`}
+      </div>
     );
   }
 }
