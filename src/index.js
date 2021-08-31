@@ -1,14 +1,33 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import SeasonsDisplay from "./SeasonsDisplay";
+import Spinner from "./Spinner";
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  state = { lat: null, errorMessage: "" };
 
-    // THIS IS THE ONLY TIME we do direct assignment
-    // to this.state
-    this.state = { lat: null, errorMessage: "" };
+  // Its not react's own method we created as a helper function
+  renderContent() {
+    if (this.state.errorMessage && !this.state.lat) {
+      return <div>Error: {this.state.errorMessage}</div>
+    }
+    if (!this.state.errorMessage && this.state.lat) {
+      return <SeasonsDisplay lat={this.state.lat} />
+    }
+    else {
+      return <Spinner message="Please allow acccess to location" />
+    }
+  }
+  
+  render() {
+    return (
+      <div className="App">
+        {this.renderContent()}
+      </div>
+    );
+  }
 
+  componentDidMount() {
     window.navigator.geolocation.getCurrentPosition(
       (position) => {
         // we called setstate
@@ -17,19 +36,6 @@ class App extends React.Component {
       (err) => {
         this.setState({ errorMessage: err.message });
       }
-    );
-  }
-
-  render() {
-    return (
-      <div>
-        {this.state.errorMessage
-          ? null
-          : this.state.lat
-          ? `Latitude: ${this.state.lat}`
-          : `Latitude: loading...`}
-        {this.state.errorMessage && `Error: ${this.state.errorMessage}`}
-      </div>
     );
   }
 }
